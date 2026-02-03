@@ -1,7 +1,14 @@
 [project]
 name = "puzzle-solver"
 version = "0.1.0"
-description = "Add your description here"
+description = "Huarong Path Puzzle Solver using BFS with canonical state deduplication"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["test_solver.py"]
+python_files = ["test_*.py"]

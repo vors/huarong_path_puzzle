@@ -1,6 +1,8 @@
 from collections import deque
 from typing import List, Tuple, Set, Optional, Dict
 
+import argparse
+
 class PuzzleState:
     def __init__(self, board: List[List[str]]):
         self.board = [row[:] for row in board]
@@ -228,16 +230,83 @@ def solve_puzzle(initial_board: List[str]) -> Optional[List[Tuple[str, str, Puzz
     return None
 
 
-def main():
-    # Example input
-    initial_board = [
+# Preset boards for testing
+PRESETS = {
+    "1": [
         "ABBC",
         "ABBC",
         "DEEX",
         "DYZX",
         "K..I"
+    ],
+    "2": [
+        "ABBK",
+        "ABBI",
+        "CCZY",
+        "DXXS",
+        "D..S"
+    ],
+    "3": [
+        "AAFF",
+        "AABB",
+        "IEEK",
+        "JYYZ",
+        ".SS."
     ]
+}
+
+
+def parse_board(board_str: str) -> List[str]:
+    """Parse a board string into a list of rows.
     
+    The board can be provided as:
+    - Newline-separated rows: "ABBC\\nABBC\\nDEEX\\nDYZX\\nK..I"
+    - Comma-separated rows: "ABBC,ABBC,DEEX,DYZX,K..I"
+    """
+    # Try newline first
+    if '\n' in board_str:
+        rows = [row.strip() for row in board_str.strip().split('\n') if row.strip()]
+    else:
+        # Try comma-separated
+        rows = [row.strip() for row in board_str.split(',') if row.strip()]
+    
+    return rows
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Huarong Path Puzzle Solver",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Use a preset board (1, 2, or 3):
+  uv run python solver.py --preset 1
+
+  # Provide a custom board (comma-separated rows):
+  uv run python solver.py --board "ABBC,ABBC,DEEX,DYZX,K..I"
+
+  # Provide a custom board (newline-separated in quotes):
+  uv run python solver.py --board "ABBC
+ABBC
+DEEX
+DYZX
+K..I"
+"""
+    )
+    parser.add_argument("--preset", type=str, choices=["1", "2", "3"],
+                        help="Use a preset board configuration (1, 2, or 3)")
+    parser.add_argument("--board", type=str,
+                        help="Custom board as comma-separated or newline-separated rows")
+    args = parser.parse_args()
+
+    if args.board:
+        initial_board = parse_board(args.board)
+    elif args.preset:
+        initial_board = PRESETS[args.preset]
+    else:
+        # Default to preset 1
+        initial_board = PRESETS["1"]
+
     print("Initial Board:")
     print('\n'.join(initial_board))
     print("\n" + "="*50 + "\n")
